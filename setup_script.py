@@ -39,7 +39,7 @@ scripts = [
     "macro_fetch.py",
     "wide_form.py",
     "cleaning.py",
-    "feautre_creation.py",  # Note: There appears to be a typo in your list (feautre vs feature)
+    "feature_creation.py",  # Note: There appears to be a typo in your list (feautre vs feature)
     "clustering.py",
     "optimization.py"
 ]
