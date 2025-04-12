@@ -218,6 +218,10 @@ def update_macro_data(existing_file="big_data/merged_stock_macro_data.csv"):
     if "Month" not in stock_data.columns:
         stock_data["Month"] = stock_data[stock_date_col].dt.to_period("M").astype(str)
     
+    # Make sure "Quarter" column exists in stock_data
+    if "Quarter" not in stock_data.columns:
+        stock_data["Quarter"] = stock_data["Date"].dt.to_period("Q").astype(str)  # YYYY-Qx
+    
     # Merge stock data with macro data (Left Join on Month)
     merged_data = stock_data.merge(macro_df, on="Month", how="left")
     

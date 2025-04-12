@@ -17,7 +17,7 @@ import warnings
 warnings.filterwarnings('ignore', category=pd.errors.PerformanceWarning)
 
 # Load the cleaned weekday data
-file_path = "big_data/big_data/clean_weekday_data.csv"
+file_path = "big_data/clean_weekday_data.csv"
 df = pd.read_csv(file_path)
 
 # Ensure Date_x is datetime
