@@ -191,7 +191,7 @@ def build_dynamic_portfolios(allocation_file, regime_file, start_date='2010-07-0
     df_dynamic = pd.DataFrame(dynamic_portfolios)
     
     # Handle any NaNs (forward-fill is a reasonable approach for missing daily returns)
-    df_dynamic = df_dynamic.fillna(method='ffill')
+    df_dynamic = df_dynamic.ffill()#fillna(method='ffill')
     
     # Calculate cumulative returns for each portfolio and SPY
     # Find earliest date with complete data
@@ -312,6 +312,8 @@ def calculate_performance_metrics(portfolio_returns, spy_returns, output_folder=
     
     # Calculate metrics
     metrics = pd.DataFrame(index=combined_returns.columns)
+
+    metrics.index.name = 'Metric Name'
     
     # Calculate annualized return
     total_days = len(pct_change)

@@ -61,7 +61,7 @@ def calculate_ticker_features(ticker, df, features_df):
         zscore = stats.zscore(prices, nan_policy='omit')
         price_outliers = abs(zscore) > 4
         prices[price_outliers] = np.nan
-        prices = prices.fillna(method='ffill').fillna(method='bfill')
+        prices = prices.ffill().bfill()#.fillna(method='ffill').fillna(method='bfill')
         
         # 1. Calculate daily returns (with outlier handling)
         daily_returns = prices.pct_change()
@@ -69,7 +69,7 @@ def calculate_ticker_features(ticker, df, features_df):
         ret_zscore = stats.zscore(daily_returns, nan_policy='omit')
         ret_outliers = abs(ret_zscore) > 4
         daily_returns[ret_outliers] = np.nan
-        daily_returns = daily_returns.fillna(method='ffill').fillna(0)  # Replace outliers with 0 return
+        daily_returns = daily_returns.ffill().fillna(0)#.fillna(method='ffill').fillna(0)  # Replace outliers with 0 return
         features_df[f"{ticker}_Return"] = daily_returns
         
         # 2. Calculate 200-day moving average
@@ -203,7 +203,7 @@ print(f"Remaining NaN values: {nan_count}")
 # If there are remaining NaNs, fill them
 if nan_count > 0:
     # Fill NaNs with forward fill then backward fill
-    features_df = features_df.fillna(method='ffill').fillna(method='bfill')
+    features_df = features_df.ffill().bfill()#.fillna(method='ffill').fillna(method='bfill')
     
     # Check if all NaNs are filled
     remaining_nans = features_df.isnull().sum().sum()

@@ -81,9 +81,9 @@ print("\nImputing remaining nulls in numeric columns...")
 for col in numeric_cols:
     if weekday_df[col].isnull().any():
         # First try forward fill (most recent value)
-        weekday_df[col] = weekday_df[col].fillna(method='ffill')
+        weekday_df[col] = weekday_df[col].ffill()#.fillna(method='ffill')
         # Then backward fill for any remaining (beginning of series)
-        weekday_df[col] = weekday_df[col].fillna(method='bfill')
+        weekday_df[col] = weekday_df[col].bfill()#.fillna(method='bfill')
 
 # Check if we still have nulls
 remaining_nulls = weekday_df[numeric_cols].isnull().sum().sum()

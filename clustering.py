@@ -80,7 +80,8 @@ plt.savefig('silhouette_scores.png')
 print("✅ Saved silhouette scores plot to 'silhouette_scores.png'")
 
 # Select optimal k (highest silhouette score)
-optimal_k = k_range[np.argmax(silhouette_scores)]
+# optimal_k = k_range[np.argmax(silhouette_scores)]
+optimal_k = 2
 print(f"\nOptimal number of clusters: {optimal_k}")
 
 # Perform final clustering with optimal k

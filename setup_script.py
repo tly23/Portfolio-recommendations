@@ -35,13 +35,15 @@ def install_requirements():
 
 # List of scripts to run in order
 scripts = [
-    "stock_fetch.py",
-    "macro_fetch.py",
-    "wide_form.py",
-    "cleaning.py",
-    "feature_creation.py",  # Note: There appears to be a typo in your list (feautre vs feature)
-    "clustering.py",
-    "optimization.py"
+    "stock_fetch.py",           # sp500_market_data.csv
+    "macro_fetch.py",           # merged_stock_macro_data.csv
+    "wide_form.py",             # wide_form_data.csv
+    "cleaning.py",              # clean_weekday_data.csv
+    "feature_creation.py",      # engineered_features.csv
+    "clustering.py",            # market_regimes.csv, full_dataset_with_regimes.csv
+    "optimization.py",          # portfolio_optimization_results.csv, portfolio_allocations.csv
+    "dynamic_equity_curves.py", # dynamic_equity_curves.csv, dynamic_performance_performance.csv
+    "process.py"               # line_chart_data.csv
 ]
 
 def run_script(script_name):
@@ -80,6 +82,22 @@ def main():
         print("\nPlease ensure all script files are in the current directory.")
         return 1
     
+    if os.path.exists("sp500_market_data.csv"):
+        print("\n✅ sp500_market_data.csv already exists. Skipping stock_fetch.py.")
+        scripts.remove("stock_fetch.py") 
+    
+    if os.path.exists("merged_stock_macro_data.csv"):
+        print("\n✅ merged_stock_macro_data.csv already exists. Skipping macro_fetch.py.")
+        scripts.remove("macro_fetch.py")
+
+    if 'update_data.py' not in scripts:
+        index = 0
+        for script in scripts:
+            if script in ['stock_fetch.py', 'macro_fetch.py']:
+                index+=1
+        if index < 2:
+            scripts.insert(index, 'update_data.py')
+
     # Run each script in order
     for i, script in enumerate(scripts):
         print(f"\nStep {i+1}/{len(scripts)}: {script}")
