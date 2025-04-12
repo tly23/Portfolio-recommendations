@@ -24,6 +24,8 @@ dist-ssr
 *.sw?
 *.csv
 !SP500.csv
+big_data/
+charts/
 clean_weekday_data.csv
 engineered_features.csv
 sp500_market_data.csv
