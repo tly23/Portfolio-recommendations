@@ -17,6 +17,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { AlertCircle, BarChart2, TrendingUp, Activity } from 'lucide-react';
+import { fetchMonthlyFinancialDataWithFallback } from '../utils/apiService';
 
 // Type definitions
 type RiskLevel = 'risk_averse' | 'moderate' | 'risk_loving';
@@ -120,11 +121,11 @@ const Dashboard: React.FC = () => {
   };
 
   // Generate data based on user inputs
-  const generateDashboardData = (
+  const generateDashboardData = async (
     risk: RiskLevel,
     length: InvestmentLength,
     market: MarketRegime
-  ): void => {
+  ): Promise<void> => {
     // Base data to be modified based on inputs
     let revenueData: RevenueData[] = [];
     let productData: ProductData[] = [];
@@ -140,24 +141,30 @@ const Dashboard: React.FC = () => {
       riskProfile: '',
     };
 
+    // Fetch monthly financial data from the API (with fallback)
+  const apiResponse = await fetchMonthlyFinancialDataWithFallback(risk);
+  
+  // Use the API data for revenue/returns
+  revenueData = apiResponse.data;
+
     // Generate revenue/returns data based on inputs
     switch (risk) {
       case 'risk_averse':
         // Lower returns, lower volatility
-        revenueData = [
-          { name: 'Jan', value: 1.1 },
-          { name: 'Feb', value: 0.8 },
-          { name: 'Mar', value: -0.3 },
-          { name: 'Apr', value: 1.5 },
-          { name: 'May', value: 1.0 },
-          { name: 'Jun', value: 1.8 },
-          { name: 'Jul', value: 1.6 },
-          { name: 'Aug', value: 1.0 },
-          { name: 'Sep', value: 0.7 },
-          { name: 'Oct', value: 1.5 },
-          { name: 'Nov', value: 1.0 },
-          { name: 'Dec', value: 1.9 },
-        ];
+        // revenueData = [
+        //   { name: 'Jan', value: 1.1 },
+        //   { name: 'Feb', value: 0.8 },
+        //   { name: 'Mar', value: -0.3 },
+        //   { name: 'Apr', value: 1.5 },
+        //   { name: 'May', value: 1.0 },
+        //   { name: 'Jun', value: 1.8 },
+        //   { name: 'Jul', value: 1.6 },
+        //   { name: 'Aug', value: 1.0 },
+        //   { name: 'Sep', value: 0.7 },
+        //   { name: 'Oct', value: 1.5 },
+        //   { name: 'Nov', value: 1.0 },
+        //   { name: 'Dec', value: 1.9 },
+        // ];
 
         productData = [
           { name: 'Treasury Bonds', value: 40 },
@@ -179,20 +186,20 @@ const Dashboard: React.FC = () => {
 
       case 'moderate':
         // Moderate returns, moderate volatility
-        revenueData = [
-          { name: 'Jan', value: 2.5 },
-          { name: 'Feb', value: 1.8 },
-          { name: 'Mar', value: -0.7 },
-          { name: 'Apr', value: 3.2 },
-          { name: 'May', value: 2.1 },
-          { name: 'Jun', value: 4.5 },
-          { name: 'Jul', value: 3.9 },
-          { name: 'Aug', value: 2.2 },
-          { name: 'Sep', value: 1.5 },
-          { name: 'Oct', value: 3.8 },
-          { name: 'Nov', value: 2.1 },
-          { name: 'Dec', value: 4.6 },
-        ];
+        // revenueData = [
+        //   { name: 'Jan', value: 2.5 },
+        //   { name: 'Feb', value: 1.8 },
+        //   { name: 'Mar', value: -0.7 },
+        //   { name: 'Apr', value: 3.2 },
+        //   { name: 'May', value: 2.1 },
+        //   { name: 'Jun', value: 4.5 },
+        //   { name: 'Jul', value: 3.9 },
+        //   { name: 'Aug', value: 2.2 },
+        //   { name: 'Sep', value: 1.5 },
+        //   { name: 'Oct', value: 3.8 },
+        //   { name: 'Nov', value: 2.1 },
+        //   { name: 'Dec', value: 4.6 },
+        // ];
 
         productData = [
           { name: 'S&P 500 ETF', value: 35 },
@@ -214,20 +221,20 @@ const Dashboard: React.FC = () => {
 
       case 'risk_loving':
         // Higher returns, higher volatility
-        revenueData = [
-          { name: 'Jan', value: 4.2 },
-          { name: 'Feb', value: -2.5 },
-          { name: 'Mar', value: -3.1 },
-          { name: 'Apr', value: 7.8 },
-          { name: 'May', value: 5.2 },
-          { name: 'Jun', value: 6.7 },
-          { name: 'Jul', value: 8.3 },
-          { name: 'Aug', value: -2.1 },
-          { name: 'Sep', value: 3.6 },
-          { name: 'Oct', value: 6.5 },
-          { name: 'Nov', value: 4.9 },
-          { name: 'Dec', value: 7.2 },
-        ];
+        // revenueData = [
+        //   { name: 'Jan', value: 4.2 },
+        //   { name: 'Feb', value: -2.5 },
+        //   { name: 'Mar', value: -3.1 },
+        //   { name: 'Apr', value: 7.8 },
+        //   { name: 'May', value: 5.2 },
+        //   { name: 'Jun', value: 6.7 },
+        //   { name: 'Jul', value: 8.3 },
+        //   { name: 'Aug', value: -2.1 },
+        //   { name: 'Sep', value: 3.6 },
+        //   { name: 'Oct', value: 6.5 },
+        //   { name: 'Nov', value: 4.9 },
+        //   { name: 'Dec', value: 7.2 },
+        // ];
 
         productData = [
           { name: 'Growth Stocks', value: 45 },

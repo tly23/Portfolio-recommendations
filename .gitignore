@@ -30,3 +30,4 @@ sp500_market_data.csv
 wide_form_data.csv
 merged_stock_macro_data.csv
 full_dataset_with_regimes.csv
+*.pyc
