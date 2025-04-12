@@ -76,8 +76,8 @@ plt.xlabel('Number of clusters (k)')
 plt.ylabel('Silhouette Score')
 plt.title('Silhouette Score Method for Optimal k')
 plt.grid(True)
-plt.savefig('silhouette_scores.png')
-print("✅ Saved silhouette scores plot to 'silhouette_scores.png'")
+plt.savefig('charts/clustering_charts/silhouette_scores.png')
+print("✅ Saved silhouette scores plot to 'charts/clustering_charts/silhouette_scores.png'")
 
 # Select optimal k (highest silhouette score)
 # optimal_k = k_range[np.argmax(silhouette_scores)]
@@ -155,8 +155,8 @@ plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
 plt.gca().xaxis.set_major_locator(mdates.YearLocator())
 
 plt.tight_layout()
-plt.savefig('market_regimes_timeline.png')
-print("✅ Saved regime timeline plot to 'market_regimes_timeline.png'")
+plt.savefig('charts/clustering_charts/market_regimes_timeline.png')
+print("✅ Saved regime timeline plot to 'charts/clustering_charts/market_regimes_timeline.png'")
 
 # Analyze characteristics of each regime
 regime_analysis = df.groupby('smoothed_regime')[regime_features].mean()
@@ -176,8 +176,8 @@ plt.figure(figsize=(12, 8))
 sns.heatmap(regime_analysis, annot=True, cmap='coolwarm', center=0, fmt='.2f')
 plt.title('Market Regime Characteristics')
 plt.tight_layout()
-plt.savefig('regime_characteristics.png')
-print("✅ Saved regime characteristics heatmap to 'regime_characteristics.png'")
+plt.savefig('charts/clustering_charts/regime_characteristics.png')
+print("✅ Saved regime characteristics heatmap to 'charts/clustering_charts/regime_characteristics.png'")
 
 # Plot typical feature values by regime
 plt.figure(figsize=(15, 10))
@@ -191,8 +191,8 @@ for i, feature in enumerate(regime_features):
     plt.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('regime_feature_distributions.png')
-print("✅ Saved regime feature distributions to 'regime_feature_distributions.png'")
+plt.savefig('charts/clustering_charts/regime_feature_distributions.png')
+print("✅ Saved regime feature distributions to 'charts/clustering_charts/regime_feature_distributions.png'")
 
 # Visualize transitions between regimes with sankey diagram
 try:

@@ -246,8 +246,8 @@ plt.title('Stocks Above 200-day MA (%)')
 plt.grid(True)
 
 plt.tight_layout()
-plt.savefig('market_features.png')
-print("✅ Created visualization of market features: 'market_features.png'")
+plt.savefig('charts/feature_creation_charts/market_features.png')
+print("✅ Created visualization of market features: 'charts/feature_creation_charts/market_features.png'")
 
 # Save features to CSV
 output_file = "engineered_features.csv"

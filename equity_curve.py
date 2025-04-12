@@ -272,14 +272,14 @@ def build_dynamic_portfolios(allocation_file, regime_file, start_date='2010-07-0
         
         # Try to save the plot to the output folder
         try:
-            plot_path = os.path.join(output_folder, "dynamic_portfolio_comparison.png")
+            plot_path = os.path.join(output_folder, "charts/equity_curve_charts/dynamic_portfolio_comparison.png")
             plt.savefig(plot_path, dpi=300, bbox_inches='tight')
             print(f"Comparison plot saved to {plot_path}")
         except Exception as e:
             print(f"Error saving plot to {output_folder}: {e}")
             # Try to save to current directory as fallback
             try:
-                fallback_path = os.path.join('.', "dynamic_portfolio_comparison.png")
+                fallback_path = os.path.join('.', "charts/equity_curve_charts/dynamic_portfolio_comparison.png")
                 plt.savefig(fallback_path, dpi=300, bbox_inches='tight')
                 print(f"Comparison plot saved to fallback location: {fallback_path}")
             except Exception as e2:

@@ -331,8 +331,8 @@ if not results_df.empty:
             print(f"Warning: Could not process data for regime {regime_id}: {e}")
     
     plt.tight_layout()
-    plt.savefig('portfolio_performance_by_regime.png')
-    print("✅ Saved portfolio performance visualization to 'portfolio_performance_by_regime.png'")
+    plt.savefig('charts/optimization_charts/portfolio_performance_by_regime.png')
+    print("✅ Saved portfolio performance visualization to 'charts/optimization_charts/portfolio_performance_by_regime.png'")
 
 # Create weight visualizations for each combination
 print("\nCreating visualizations of portfolio weights...")
@@ -369,7 +369,7 @@ for params, weights in portfolio_weights.items():
     plt.title(f'Top {n_top_holdings} Holdings - {params}')
     plt.grid(True, axis='x')
     plt.tight_layout()
-    plt.savefig(f'portfolio_weights/{params}_weights.png')
+    plt.savefig(f'charts/optimization_charts/portfolio_weights/{params}_weights.png')
     plt.close()
 
 # Create a single consolidated PDF with all portfolios

@@ -45,8 +45,8 @@ nulls_by_day.sort_values().plot(kind='bar', color='skyblue')
 plt.title('Percentage of Nulls by Day of Week')
 plt.ylabel('Null Percentage (%)')
 plt.tight_layout()
-plt.savefig('nulls_by_day.png')
-print("✅ Created visualization of nulls by day: 'nulls_by_day.png'")
+plt.savefig('charts/cleaning_charts/nulls_by_day.png')
+print("✅ Created visualization of nulls by day: 'charts/cleaning_charts/nulls_by_day.png'")
 
 # Step 2: Check for US market holidays
 # Identify days with high percentage of nulls that might be holidays
@@ -143,7 +143,7 @@ plt.xlabel('Month')
 plt.ylabel('Count')
 
 plt.tight_layout()
-plt.savefig('data_distribution.png')
-print("✅ Created visualization of data distribution: 'data_distribution.png'")
+plt.savefig('charts/cleaning_charts/data_distribution.png')
+print("✅ Created visualization of data distribution: 'charts/cleaning_charts/data_distribution.png'")
 
 print("\nThe dataset is now ready for K-means clustering!")
