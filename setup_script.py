@@ -42,7 +42,7 @@ scripts = [
     "feature_creation.py",      # big_data/engineered_features.csv
     "clustering.py",            # big_data/market_regimes.csv, big_data/full_dataset_with_regimes.csv
     "optimization.py",          # big_data/portfolio_optimization_results.csv, big_data/portfolio_allocations.csv
-    "dynamic_equity_curves.py", # output/dynamic_equity_curves.csv, output/dynamic_performance_performance.csv
+    "equity_curve.py", # output/dynamic_equity_curves.csv, output/dynamic_performance_performance.csv
     "process.py"               # output/line_chart_data.csv
 ]
 
