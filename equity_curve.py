@@ -348,8 +348,8 @@ def calculate_performance_metrics(portfolio_returns, spy_returns, output_folder=
 def main():
     """Main function to execute the script."""
     # Set the file paths
-    allocation_file = 'portfolio_allocations.csv'
-    regime_file = 'market_regimes.csv'
+    allocation_file = 'big_data/portfolio_allocations.csv'
+    regime_file = 'big_data/market_regimes.csv'
   
     end_date = datetime.today().strftime('%Y-%m-%d')
     # Create a more robust output directory

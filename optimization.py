@@ -10,7 +10,7 @@ from datetime import timedelta
 np.random.seed(42)
 
 # Load data with regimes
-file_path = "full_dataset_with_regimes.csv"
+file_path = "big_data/full_dataset_with_regimes.csv"
 df = pd.read_csv(file_path)
 df['Date_x'] = pd.to_datetime(df['Date_x'])
 print(f"Loaded dataset with shape: {df.shape}")
@@ -403,8 +403,8 @@ except Exception as e:
 
 # Save results to CSV files if there are valid results
 if not results_df.empty:
-    results_df.to_csv('portfolio_optimization_results.csv')
-    print("✅ Saved portfolio optimization results to 'portfolio_optimization_results.csv'")
+    results_df.to_csv('big_data/portfolio_optimization_results.csv')
+    print("✅ Saved portfolio optimization results to 'big_data/portfolio_optimization_results.csv'")
 
 # Create a more user-friendly portfolio allocation file
 portfolio_allocations = pd.DataFrame()
@@ -433,8 +433,8 @@ for params, weights in portfolio_weights.items():
 
 # Save allocations
 if not portfolio_allocations.empty:
-    portfolio_allocations.to_csv('portfolio_allocations.csv')
-    print("✅ Saved portfolio allocations to 'portfolio_allocations.csv'")
+    portfolio_allocations.to_csv('big_data/portfolio_allocations.csv')
+    print("✅ Saved portfolio allocations to 'big_data/portfolio_allocations.csv'")
 
 # Create a function to get the optimal portfolio based on user inputs
 def get_optimal_portfolio(regime_id, risk_appetite, holding_duration):

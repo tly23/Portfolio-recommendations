@@ -5,7 +5,7 @@ import time
 from datetime import datetime, timedelta
 import os.path
 
-def update_stock_data(existing_file="sp500_market_data.csv"):
+def update_stock_data(existing_file="big_data/sp500_market_data.csv"):
     """
     Update stock data by only fetching the most recent data
     """
@@ -136,7 +136,7 @@ def update_stock_data(existing_file="sp500_market_data.csv"):
     
     return updated_data
 
-def update_macro_data(existing_file="merged_stock_macro_data.csv"):
+def update_macro_data(existing_file="big_data/merged_stock_macro_data.csv"):
     """
     Update macroeconomic data from FRED
     """

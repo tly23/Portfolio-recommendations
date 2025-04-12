@@ -17,7 +17,7 @@ import warnings
 warnings.filterwarnings('ignore', category=pd.errors.PerformanceWarning)
 
 # Load the cleaned weekday data
-file_path = "clean_weekday_data.csv"
+file_path = "big_data/big_data/clean_weekday_data.csv"
 df = pd.read_csv(file_path)
 
 # Ensure Date_x is datetime
@@ -250,7 +250,7 @@ plt.savefig('charts/feature_creation_charts/market_features.png')
 print("✅ Created visualization of market features: 'charts/feature_creation_charts/market_features.png'")
 
 # Save features to CSV
-output_file = "engineered_features.csv"
+output_file = "big_data/engineered_features.csv"
 features_df.to_csv(output_file, index=False)
 print(f"✅ Saved engineered features to {output_file}")
 

@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load your dataset
-file_path = "merged_stock_macro_data.csv"  # Update with your actual file path
+file_path = "big_data/merged_stock_macro_data.csv"  # Update with your actual file path
 df = pd.read_csv(file_path)
 
 # Create a copy of the macro variables for later
@@ -25,6 +25,6 @@ wide_df = wide_df.merge(macro_vars, on='Date_x', how='left')
 print(wide_df.head(10))
 
 # Save the transformed dataset
-wide_df.to_csv("wide_form_data.csv", index=False)
+wide_df.to_csv("big_data/wide_form_data.csv", index=False)
 
 print("✅ wide-form dataset saved successfully!")

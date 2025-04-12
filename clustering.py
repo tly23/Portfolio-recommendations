@@ -21,7 +21,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Load the engineered features dataset
-file_path = "engineered_features.csv"
+file_path = "big_data/engineered_features.csv"
 df = pd.read_csv(file_path)
 df['Date_x'] = pd.to_datetime(df['Date_x'])
 print(f"Loaded dataset with shape: {df.shape}")
@@ -245,11 +245,11 @@ except:
     print("Note: Plotly library not available, skipping transition diagram")
 
 # Save results
-df[['Date_x', 'regime', 'smoothed_regime']].to_csv('market_regimes.csv', index=False)
-print("✅ Saved regime assignments to 'market_regimes.csv'")
+df[['Date_x', 'regime', 'smoothed_regime']].to_csv('big_data/market_regimes.csv', index=False)
+print("✅ Saved regime assignments to 'big_data/market_regimes.csv'")
 
 # Save the full dataset with regime assignments
-df.to_csv('full_dataset_with_regimes.csv', index=False)
-print("✅ Saved full dataset with regime assignments to 'full_dataset_with_regimes.csv'")
+df.to_csv('big_data/full_dataset_with_regimes.csv', index=False)
+print("✅ Saved full dataset with regime assignments to 'big_data/full_dataset_with_regimes.csv'")
 
 print("\nRegime clustering complete!")

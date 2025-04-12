@@ -12,7 +12,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
 # Load wide-form dataset
-file_path = "wide_form_data.csv"
+file_path = "big_data/wide_form_data.csv"
 df = pd.read_csv(file_path)
 
 # Ensure Date_x is in datetime format
@@ -110,8 +110,8 @@ print(f"Numeric columns sample: {numeric_cols[:5]}...")
 print(f"Date range: {final_df['Date_x'].min()} to {final_df['Date_x'].max()}")
 
 # Save the clean dataset
-final_df.to_csv("clean_weekday_data.csv", index=False)
-print("\n✅ Clean dataset saved to 'clean_weekday_data.csv'")
+final_df.to_csv("big_data/clean_weekday_data.csv", index=False)
+print("\n✅ Clean dataset saved to 'big_data/clean_weekday_data.csv'")
 
 # Create a small report of dataset characteristics
 stocks = set()
