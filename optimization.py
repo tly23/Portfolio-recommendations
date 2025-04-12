@@ -376,7 +376,7 @@ for params, weights in portfolio_weights.items():
 try:
     from matplotlib.backends.backend_pdf import PdfPages
     
-    with PdfPages('all_portfolio_weights.pdf') as pdf:
+    with PdfPages('pdfs/all_portfolio_weights.pdf') as pdf:
         for params, weights in portfolio_weights.items():
             if not weights:  # Skip empty portfolios
                 continue
