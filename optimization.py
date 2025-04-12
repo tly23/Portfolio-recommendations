@@ -369,7 +369,7 @@ for params, weights in portfolio_weights.items():
     plt.title(f'Top {n_top_holdings} Holdings - {params}')
     plt.grid(True, axis='x')
     plt.tight_layout()
-    plt.savefig(f'charts/optimization_charts/portfolio_weights/{params}_weights.png')
+    plt.savefig(f'charts/portfolio_weights/{params}_weights.png')
     plt.close()
 
 # Create a single consolidated PDF with all portfolios
