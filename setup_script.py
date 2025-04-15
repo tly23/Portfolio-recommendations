@@ -43,7 +43,8 @@ scripts = [
     "clustering.py",            # big_data/market_regimes.csv, big_data/full_dataset_with_regimes.csv
     "optimization.py",          # big_data/portfolio_optimization_results.csv, big_data/portfolio_allocations.csv
     "equity_curve.py", # output/dynamic_equity_curves.csv, output/dynamic_performance_performance.csv
-    "process.py"               # output/line_chart_data.csv
+    "process.py",               # output/line_chart_data.csv
+    "asset_class_allocation.py", # output/asset_class_allocations.csv
 ]
 
 def run_script(script_name):

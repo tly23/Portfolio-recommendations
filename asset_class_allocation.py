@@ -247,8 +247,23 @@ def analyze_portfolio_allocations(csv_path):
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     
     plt.tight_layout()
-    plt.savefig('portfolio_allocations_analysis.png')
+    plt.savefig('charts/asset_class_allocation_charts/portfolio_allocations_analysis.png')
     
+    weights_df.index.name = 'Asset Class'
+    
+    # Add weights column
+    average_weights_df = weights_df.mean(axis=1)
+    weights_df['weights'] = average_weights_df
+    
+    print("\nPortfolio weight:")
+    print(weights_df['weights'])
+
+    print("\nTotal portfolio weight:")
+    print(sum(weights_df['weights']))
+
+    weights_df =(weights_df['weights']*100).round(2)
+    weights_df = weights_df.astype(float).round(2)
+
     return weights_df, regime_df, risk_profile_df, time_horizon_df
 
 def create_stacked_bar_chart(df, title, filename):
@@ -296,21 +311,21 @@ def create_stacked_bar_chart(df, title, filename):
 
 if __name__ == "__main__":
     # Path to the CSV file
-    csv_path = "portfolio_allocations.csv"
+    csv_path = "big_data/portfolio_allocations.csv"
     
     # Run the analysis
     weights_df, regime_df, risk_profile_df, time_horizon_df = analyze_portfolio_allocations(csv_path)
     
     # Save results to CSV files
-    weights_df.to_csv("asset_class_weights.csv")
-    regime_df.to_csv("weights_by_regime.csv")
-    risk_profile_df.to_csv("weights_by_risk_profile.csv")
-    time_horizon_df.to_csv("weights_by_time_horizon.csv")
+    weights_df.to_csv("output/asset_class_weights.csv")
+    # regime_df.to_csv("weights_by_regime.csv")
+    risk_profile_df.to_csv("output/weights_by_risk_profile.csv")
+    # time_horizon_df.to_csv("weights_by_time_horizon.csv")
     
     # Create additional visualizations
-    create_stacked_bar_chart(regime_df, 'Asset Allocation by Market Regime', 'regime_allocations.png')
-    create_stacked_bar_chart(risk_profile_df, 'Asset Allocation by Risk Profile', 'risk_profile_allocations.png')
-    create_stacked_bar_chart(time_horizon_df, 'Asset Allocation by Time Horizon', 'time_horizon_allocations.png')
+    create_stacked_bar_chart(regime_df, 'Asset Allocation by Market Regime', 'charts/asset_class_allocation_charts/regime_allocations.png')
+    create_stacked_bar_chart(risk_profile_df, 'Asset Allocation by Risk Profile', 'charts/asset_class_allocation_charts/risk_profile_allocations.png')
+    create_stacked_bar_chart(time_horizon_df, 'Asset Allocation by Time Horizon', 'charts/asset_class_allocation_charts/time_horizon_allocations.png')
     
     # Print summary of what categories we defined
     print("\nAsset Class Definitions:")

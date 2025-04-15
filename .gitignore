@@ -22,7 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-*.csv
 !SP500.csv
 clean_weekday_data.csv
 engineered_features.csv

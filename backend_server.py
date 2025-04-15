@@ -17,7 +17,49 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+def get_asset_class_allocation(filepath: str, risk_level: str) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Extracts the asset class allocation data from a CSV file.
+    
+    Args:
+        filepath: Path to the CSV file
+        
+    Returns:
+        A dictionary with a 'data' key containing the asset class allocations
+    """
+    try:
+        # Read the CSV file
+        df = pd.read_csv(filepath)
+        
+        # Ensure the Date column exists
+        if 'Asset Class' not in df.columns:
+            raise ValueError(f"{filepath} CSV file must contain an 'Asset Class' column")
+        
+        if 'weights' not in df.columns:
+            raise ValueError(f"{filepath} CSV file must contain an 'weights' column")
+        
+        data = [{"name": row['Asset Class'], "value": row['weights']} for _, row in df.iterrows()]
 
+
+        column_mapping = {
+            "risk_averse": "Dynamic Risk Averse",
+            "risk_loving": "Dynamic Risk Loving",
+            "moderate": "Dynamic Risk Neutral"
+        }
+
+        if risk_level not in column_mapping:
+            raise ValueError(f"Invalid risk level: {risk_level}. Must be one of {list(column_mapping.keys())}")
+
+        column_name = column_mapping[risk_level]
+        if column_name not in df.columns:
+            raise ValueError(f"CSV file must contain a '{column_name}' column")
+        
+        return {"data": data}
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error processing CSV data: {str(e)}")
+        raise e   
+        
 def get_monthly_data(filepath: str, risk_level: str) -> Dict[str, List[Dict[str, Any]]]:
     """
     Extracts the monthly data for the last year from a CSV file based on risk level.
@@ -165,6 +207,24 @@ def get_monthly_financial_data(risk_level: Literal["risk_averse", "risk_loving",
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+@app.get("/api/asset_allocation/")
+def get_asset_allocation(risk_level: Literal["risk_averse", "risk_loving", "moderate"] = Query(...)):
+    try:
+        csv_path = "./output/weights_by_risk_profile.csv"
+        if not os.path.exists(csv_path):
+                raise HTTPException(status_code=404, detail="CSV file not found")
+            
+        # Get the monthly data
+        result = get_asset_class_allocation(csv_path, risk_level)
+        return JSONResponse(content=result)
+    
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    #return get_asset_class_allocation(filepath)
 
 if __name__ == "__main__":
     import uvicorn
