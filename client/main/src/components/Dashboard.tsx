@@ -146,6 +146,7 @@ const Dashboard: React.FC = () => {
   
   // Use the API data for revenue/returns
   revenueData = apiResponse.data;
+  console.log(revenueData);
 
     // Generate revenue/returns data based on inputs
     switch (risk) {
@@ -748,14 +749,14 @@ const Dashboard: React.FC = () => {
               <Tooltip
                 formatter={(value: number) => [
                   `${value.toLocaleString()}%`,
-                  'Returns',
+                  '% Returns',
                 ]}
               />
               <Legend />
               <Area
                 type="monotone"
                 dataKey="value"
-                name="Returns"
+                name="% Returns"
                 stroke={colors.primary}
                 fill={colors.primary}
                 fillOpacity={0.2}

@@ -120,7 +120,12 @@ def get_monthly_data(filepath: str, risk_level: str) -> Dict[str, List[Dict[str,
             else:
                 current_month += 1
         
-        return {"data": result}
+        first_value = result[0]["value"]
+
+        modified_result = [{"name": item["name"], "value": round(((item["value"] / first_value) - 1)*100, 2)} for item in result]
+
+        print(modified_result)
+        return {"data": modified_result}
     
     except Exception as e:
         # Log the error for debugging

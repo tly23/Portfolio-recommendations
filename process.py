@@ -13,7 +13,7 @@ def process_csv(input_file, output_file):
     
     # Subtract 100 from each numeric column
     for col in numeric_columns:
-        df[col] = (df[col] - 100).round(2)
+        df[col] = (df[col]).round(2)
     
     # Save to a new CSV file with original column names preserved
     df.to_csv(output_file, index=False)
