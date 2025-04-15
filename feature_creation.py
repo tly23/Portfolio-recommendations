@@ -17,7 +17,7 @@ import warnings
 warnings.filterwarnings('ignore', category=pd.errors.PerformanceWarning)
 
 # Load the cleaned weekday data
-file_path = "clean_weekday_data.csv"
+file_path = "big_data/clean_weekday_data.csv"
 df = pd.read_csv(file_path)
 
 # Ensure Date_x is datetime
@@ -61,7 +61,7 @@ def calculate_ticker_features(ticker, df, features_df):
         zscore = stats.zscore(prices, nan_policy='omit')
         price_outliers = abs(zscore) > 4
         prices[price_outliers] = np.nan
-        prices = prices.fillna(method='ffill').fillna(method='bfill')
+        prices = prices.ffill().bfill()#.fillna(method='ffill').fillna(method='bfill')
         
         # 1. Calculate daily returns (with outlier handling)
         daily_returns = prices.pct_change()
@@ -69,7 +69,7 @@ def calculate_ticker_features(ticker, df, features_df):
         ret_zscore = stats.zscore(daily_returns, nan_policy='omit')
         ret_outliers = abs(ret_zscore) > 4
         daily_returns[ret_outliers] = np.nan
-        daily_returns = daily_returns.fillna(method='ffill').fillna(0)  # Replace outliers with 0 return
+        daily_returns = daily_returns.ffill().fillna(0)#.fillna(method='ffill').fillna(0)  # Replace outliers with 0 return
         features_df[f"{ticker}_Return"] = daily_returns
         
         # 2. Calculate 200-day moving average
@@ -203,7 +203,7 @@ print(f"Remaining NaN values: {nan_count}")
 # If there are remaining NaNs, fill them
 if nan_count > 0:
     # Fill NaNs with forward fill then backward fill
-    features_df = features_df.fillna(method='ffill').fillna(method='bfill')
+    features_df = features_df.ffill().bfill()#.fillna(method='ffill').fillna(method='bfill')
     
     # Check if all NaNs are filled
     remaining_nans = features_df.isnull().sum().sum()
@@ -246,11 +246,11 @@ plt.title('Stocks Above 200-day MA (%)')
 plt.grid(True)
 
 plt.tight_layout()
-plt.savefig('market_features.png')
-print("✅ Created visualization of market features: 'market_features.png'")
+plt.savefig('charts/feature_creation_charts/market_features.png')
+print("✅ Created visualization of market features: 'charts/feature_creation_charts/market_features.png'")
 
 # Save features to CSV
-output_file = "engineered_features.csv"
+output_file = "big_data/engineered_features.csv"
 features_df.to_csv(output_file, index=False)
 print(f"✅ Saved engineered features to {output_file}")
 

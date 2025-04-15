@@ -12,7 +12,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
 # Load wide-form dataset
-file_path = "wide_form_data.csv"
+file_path = "big_data/wide_form_data.csv"
 df = pd.read_csv(file_path)
 
 # Ensure Date_x is in datetime format
@@ -45,8 +45,8 @@ nulls_by_day.sort_values().plot(kind='bar', color='skyblue')
 plt.title('Percentage of Nulls by Day of Week')
 plt.ylabel('Null Percentage (%)')
 plt.tight_layout()
-plt.savefig('nulls_by_day.png')
-print("✅ Created visualization of nulls by day: 'nulls_by_day.png'")
+plt.savefig('charts/cleaning_charts/nulls_by_day.png')
+print("✅ Created visualization of nulls by day: 'charts/cleaning_charts/nulls_by_day.png'")
 
 # Step 2: Check for US market holidays
 # Identify days with high percentage of nulls that might be holidays
@@ -81,9 +81,9 @@ print("\nImputing remaining nulls in numeric columns...")
 for col in numeric_cols:
     if weekday_df[col].isnull().any():
         # First try forward fill (most recent value)
-        weekday_df[col] = weekday_df[col].fillna(method='ffill')
+        weekday_df[col] = weekday_df[col].ffill()#.fillna(method='ffill')
         # Then backward fill for any remaining (beginning of series)
-        weekday_df[col] = weekday_df[col].fillna(method='bfill')
+        weekday_df[col] = weekday_df[col].bfill()#.fillna(method='bfill')
 
 # Check if we still have nulls
 remaining_nulls = weekday_df[numeric_cols].isnull().sum().sum()
@@ -110,8 +110,8 @@ print(f"Numeric columns sample: {numeric_cols[:5]}...")
 print(f"Date range: {final_df['Date_x'].min()} to {final_df['Date_x'].max()}")
 
 # Save the clean dataset
-final_df.to_csv("clean_weekday_data.csv", index=False)
-print("\n✅ Clean dataset saved to 'clean_weekday_data.csv'")
+final_df.to_csv("big_data/clean_weekday_data.csv", index=False)
+print("\n✅ Clean dataset saved to 'big_data/clean_weekday_data.csv'")
 
 # Create a small report of dataset characteristics
 stocks = set()
@@ -143,7 +143,7 @@ plt.xlabel('Month')
 plt.ylabel('Count')
 
 plt.tight_layout()
-plt.savefig('data_distribution.png')
-print("✅ Created visualization of data distribution: 'data_distribution.png'")
+plt.savefig('charts/cleaning_charts/data_distribution.png')
+print("✅ Created visualization of data distribution: 'charts/cleaning_charts/data_distribution.png'")
 
 print("\nThe dataset is now ready for K-means clustering!")

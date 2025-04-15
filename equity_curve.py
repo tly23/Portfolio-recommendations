@@ -191,7 +191,7 @@ def build_dynamic_portfolios(allocation_file, regime_file, start_date='2010-07-0
     df_dynamic = pd.DataFrame(dynamic_portfolios)
     
     # Handle any NaNs (forward-fill is a reasonable approach for missing daily returns)
-    df_dynamic = df_dynamic.fillna(method='ffill')
+    df_dynamic = df_dynamic.ffill()#fillna(method='ffill')
     
     # Calculate cumulative returns for each portfolio and SPY
     # Find earliest date with complete data
@@ -272,14 +272,14 @@ def build_dynamic_portfolios(allocation_file, regime_file, start_date='2010-07-0
         
         # Try to save the plot to the output folder
         try:
-            plot_path = os.path.join(output_folder, "dynamic_portfolio_comparison.png")
+            plot_path = os.path.join(output_folder, "charts/equity_curve_charts/dynamic_portfolio_comparison.png")
             plt.savefig(plot_path, dpi=300, bbox_inches='tight')
             print(f"Comparison plot saved to {plot_path}")
         except Exception as e:
             print(f"Error saving plot to {output_folder}: {e}")
             # Try to save to current directory as fallback
             try:
-                fallback_path = os.path.join('.', "dynamic_portfolio_comparison.png")
+                fallback_path = os.path.join('.', "charts/equity_curve_charts/dynamic_portfolio_comparison.png")
                 plt.savefig(fallback_path, dpi=300, bbox_inches='tight')
                 print(f"Comparison plot saved to fallback location: {fallback_path}")
             except Exception as e2:
@@ -312,6 +312,8 @@ def calculate_performance_metrics(portfolio_returns, spy_returns, output_folder=
     
     # Calculate metrics
     metrics = pd.DataFrame(index=combined_returns.columns)
+
+    metrics.index.name = 'Metric Name'
     
     # Calculate annualized return
     total_days = len(pct_change)
@@ -346,8 +348,8 @@ def calculate_performance_metrics(portfolio_returns, spy_returns, output_folder=
 def main():
     """Main function to execute the script."""
     # Set the file paths
-    allocation_file = 'portfolio_allocations.csv'
-    regime_file = 'market_regimes.csv'
+    allocation_file = 'big_data/portfolio_allocations.csv'
+    regime_file = 'big_data/market_regimes.csv'
   
     end_date = datetime.today().strftime('%Y-%m-%d')
     # Create a more robust output directory
