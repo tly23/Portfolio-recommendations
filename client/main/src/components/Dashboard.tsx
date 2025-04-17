@@ -638,7 +638,7 @@ const Dashboard: React.FC = () => {
           Adjust parameters to see personalized recommendations
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Risk Tolerance
@@ -720,14 +720,14 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 place-items-center">
-        <div className="bg-white p-4 rounded-lg shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
+        <div className="bg-white p-4 rounded-lg shadow text-center items-center">
           <p className="text-sm font-medium text-gray-500 mb-2">Total Return</p>
           <div className="text-2xl font-bold text-black">
             {dashboardData.summaryMetrics.totalReturn} %
           </div>
           {/* <p className={`text-xs ${'text-custom-red'} flex items-center mt-1`}> */}
-          <p className={`text-xs ${Number(dashboardData.summaryMetrics.totalReturn) > 0 === true ? "text-green-500" : 'text-custom-red'} flex items-center mt-1`}>
+          <p className={`text-xs ${Number(dashboardData.summaryMetrics.totalReturn) > 0 === true ? "text-green-500" : 'text-custom-red'} flex items-center justify-center mt-1`}>
             {/* <TrendingUp size={14} className="mr-1" />
             <TrendingDown size={14} className="mr-1" /> */}
             {Number(dashboardData.summaryMetrics.totalReturn)  > 0 ? (
@@ -741,14 +741,14 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="bg-white p-4 rounded-lg shadow text-center items-center">
           <p className="text-sm font-medium text-gray-500 mb-2">
             Portfolio Value
           </p>
           <div className="text-2xl font-bold text-black">
-            {dashboardData.summaryMetrics.portfolioValue}
+            {Number(dashboardData.summaryMetrics.portfolioValue).toLocaleString('en-US', { style: 'currency',  currency: 'USD' })}
           </div>
-          <p className={`text-xs ${Number(dashboardData.summaryMetrics.change_amount) > 0 === true ? "text-green-500" : 'text-custom-red'} flex items-center mt-1`}>
+          <p className={`text-xs ${Number(dashboardData.summaryMetrics.change_amount) > 0 === true ? "text-green-500" : 'text-custom-red'} flex items-center justify-center mt-1`}>
             {/* <TrendingUp size={14} className="mr-1" /> */}
             {Number(dashboardData.summaryMetrics.change_amount)  > 0 ? (
                 <TrendingUp size={14} className="mr-1" />
