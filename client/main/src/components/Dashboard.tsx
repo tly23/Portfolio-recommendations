@@ -16,17 +16,19 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { AlertCircle, BarChart2, TrendingUp, Activity } from 'lucide-react';
-import { fetchMonthlyFinancialDataWithFallback } from '../utils/apiService';
+import { AlertCircle, BarChart2, TrendingUp, Activity, TrendingDown } from 'lucide-react';
+import { fetchAssetAllocationData, fetchMonthlyFinancialDataWithFallback } from '../utils/apiService';
 
 // Type definitions
-type RiskLevel = 'risk_averse' | 'moderate' | 'risk_loving';
+type RiskLevel = 'risk_averse' | 'moderate' | 'risk_loving'| '60_40' | 'SPY';
 type InvestmentLength = '3months' | '6months' | '9months' | '1year';
 type MarketRegime = 'bull' | 'bear';
 
 interface RevenueData {
   name: string;
   value: number;
+  SPY: number;
+  _60_40: number;
 }
 
 interface ProductData {
@@ -62,6 +64,7 @@ interface SummaryMetrics {
   riskScore: string;
   changePercent: string;
   riskProfile: string;
+  change_amount: string;
 }
 
 interface DashboardData {
@@ -92,7 +95,7 @@ const Dashboard: React.FC = () => {
   const [investmentLength, setInvestmentLength] =
     useState<InvestmentLength>('1year');
   const [marketRegime, setMarketRegime] = useState<MarketRegime>('bull');
-
+  const [investment_amount, setInvestmentAmount] = useState<number>(10000);
   // Dashboard states
   const [activeChart, setActiveChart] = useState<number>(0);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
@@ -101,11 +104,11 @@ const Dashboard: React.FC = () => {
 
   // Generate dashboard data based on user preferences
   useEffect(() => {
-    generateDashboardData(riskLevel, investmentLength, marketRegime);
-  }, []);
+    generateDashboardData(riskLevel, investmentLength, marketRegime, investment_amount);
+  }, [investment_amount, investmentLength]);
 
   const handlePreferencesSubmit = (): void => {
-    generateDashboardData(riskLevel, investmentLength, marketRegime);
+    generateDashboardData(riskLevel, investmentLength, marketRegime, investment_amount);
   };
 
   // Colors for consistent styling
@@ -124,7 +127,8 @@ const Dashboard: React.FC = () => {
   const generateDashboardData = async (
     risk: RiskLevel,
     length: InvestmentLength,
-    market: MarketRegime
+    market: MarketRegime,
+    investment_amount: number
   ): Promise<void> => {
     // Base data to be modified based on inputs
     let revenueData: RevenueData[] = [];
@@ -139,13 +143,44 @@ const Dashboard: React.FC = () => {
       riskScore: '',
       changePercent: '',
       riskProfile: '',
+      change_amount: '',
     };
 
     // Fetch monthly financial data from the API (with fallback)
   const apiResponse = await fetchMonthlyFinancialDataWithFallback(risk);
+  const assetDataResponse = await fetchAssetAllocationData(risk);
   
   // Use the API data for revenue/returns
   revenueData = apiResponse.data;
+  switch (length) {
+    case '3months':
+      revenueData = revenueData.slice(0, 3);
+      break;
+    case '6months': 
+      revenueData = revenueData.slice(0, 6);
+      break;
+    case '9months':
+      revenueData = revenueData.slice(0, 9);
+      break;
+    default:
+      break;
+  }
+  productData = assetDataResponse.data;
+
+
+  const totalReturn =  revenueData[revenueData.length - 1].value;
+  const portfolioValue =  String((investment_amount*(1 + (totalReturn / 100))).toFixed(2))
+  const change_amount = String((investment_amount*((totalReturn / 100))).toFixed(2))
+
+  summaryMetrics = {
+    totalReturn: String(totalReturn),
+    portfolioValue: portfolioValue,
+    dividendYield: '2.8%',
+    riskScore: '35/100',
+    changePercent: '+1.6%',
+    riskProfile: 'Conservative',
+    change_amount: change_amount ,
+  };
   console.log(revenueData);
 
     // Generate revenue/returns data based on inputs
@@ -167,22 +202,22 @@ const Dashboard: React.FC = () => {
         //   { name: 'Dec', value: 1.9 },
         // ];
 
-        productData = [
-          { name: 'Treasury Bonds', value: 40 },
-          { name: 'Blue Chip Stocks', value: 25 },
-          { name: 'Municipal Bonds', value: 20 },
-          { name: 'REITs', value: 10 },
-          { name: 'Gold', value: 5 },
-        ];
+        // productData = [
+        //   { name: 'Treasury Bonds', value: 40 },
+        //   { name: 'Blue Chip Stocks', value: 25 },
+        //   { name: 'Municipal Bonds', value: 20 },
+        //   { name: 'REITs', value: 10 },
+        //   { name: 'Gold', value: 5 },
+        // ];
 
-        summaryMetrics = {
-          totalReturn: '+11.2%',
-          portfolioValue: '$1,124,600',
-          dividendYield: '2.8%',
-          riskScore: '35/100',
-          changePercent: '+1.6%',
-          riskProfile: 'Conservative',
-        };
+        // summaryMetrics = {
+        //   totalReturn: '+11.2%',
+        //   portfolioValue: '$1,124,600',
+        //   dividendYield: '2.8%',
+        //   riskScore: '35/100',
+        //   changePercent: '+1.6%',
+        //   riskProfile: 'Conservative',
+        // };
         break;
 
       case 'moderate':
@@ -202,22 +237,22 @@ const Dashboard: React.FC = () => {
         //   { name: 'Dec', value: 4.6 },
         // ];
 
-        productData = [
-          { name: 'S&P 500 ETF', value: 35 },
-          { name: 'International Stocks', value: 25 },
-          { name: 'Corporate Bonds', value: 15 },
-          { name: 'REITs', value: 15 },
-          { name: 'Gold', value: 10 },
-        ];
+        // productData = [
+        //   { name: 'S&P 500 ETF', value: 35 },
+        //   { name: 'International Stocks', value: 25 },
+        //   { name: 'Corporate Bonds', value: 15 },
+        //   { name: 'REITs', value: 15 },
+        //   { name: 'Gold', value: 10 },
+        // ];
 
-        summaryMetrics = {
-          totalReturn: '+24.8%',
-          portfolioValue: '$1,350,780',
-          dividendYield: '3.4%',
-          riskScore: '65/100',
-          changePercent: '+3.2%',
-          riskProfile: 'Moderate',
-        };
+        // summaryMetrics = {
+        //   totalReturn: '+24.8%',
+        //   portfolioValue: '$1,350,780',
+        //   dividendYield: '3.4%',
+        //   riskScore: '65/100',
+        //   changePercent: '+3.2%',
+        //   riskProfile: 'Moderate',
+        // };
         break;
 
       case 'risk_loving':
@@ -237,22 +272,22 @@ const Dashboard: React.FC = () => {
         //   { name: 'Dec', value: 7.2 },
         // ];
 
-        productData = [
-          { name: 'Growth Stocks', value: 45 },
-          { name: 'Emerging Markets', value: 20 },
-          { name: 'Cryptocurrencies', value: 15 },
-          { name: 'Small-Cap Stocks', value: 15 },
-          { name: 'High-Yield Bonds', value: 5 },
-        ];
+        // productData = [
+        //   { name: 'Growth Stocks', value: 45 },
+        //   { name: 'Emerging Markets', value: 20 },
+        //   { name: 'Cryptocurrencies', value: 15 },
+        //   { name: 'Small-Cap Stocks', value: 15 },
+        //   { name: 'High-Yield Bonds', value: 5 },
+        // ];
 
-        summaryMetrics = {
-          totalReturn: '+38.5%',
-          portfolioValue: '$1,782,400',
-          dividendYield: '1.8%',
-          riskScore: '85/100',
-          changePercent: '+5.8%',
-          riskProfile: 'Aggressive',
-        };
+        // summaryMetrics = {
+        //   totalReturn: '+38.5%',
+        //   portfolioValue: '$1,782,400',
+        //   dividendYield: '1.8%',
+        //   riskScore: '85/100',
+        //   changePercent: '+5.8%',
+        //   riskProfile: 'Aggressive',
+        // };
         break;
       default:
         // Default to moderate
@@ -413,142 +448,154 @@ const Dashboard: React.FC = () => {
         { name: 'Cash', users: 800, revenue: 8000 },
       ];
     }
-
-    // Generate portfolio strategy charts based on risk level
-    if (risk === 'risk_averse') {
-      portfolioCharts = [
-        {
-          title: 'Conservative Strategy',
-          data: [
-            { name: 'Treasury Bonds', value: 40 },
-            { name: 'Blue Chip Stocks', value: 30 },
-            { name: 'Municipal Bonds', value: 15 },
-            { name: 'REITs', value: 10 },
-            { name: 'Gold', value: 5 },
-          ],
-          description:
-            'Low-risk strategy focused on capital preservation and stable income',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-        {
-          title: 'Income-Focused',
-          data: [
-            { name: 'Dividend Stocks', value: 40 },
-            { name: 'Corporate Bonds', value: 30 },
-            { name: 'Preferred Shares', value: 15 },
-            { name: 'REITs', value: 15 },
-          ],
-          colors: ['#4caf50', '#8bc34a', '#ffeb3b', '#f44336'],
-          description:
-            'Strategy optimized for generating regular passive income',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-        {
-          title: 'Inflation Protection',
-          data: [
-            { name: 'TIPS', value: 40 },
-            { name: 'Gold', value: 20 },
-            { name: 'Commodities', value: 15 },
-            { name: 'Value Stocks', value: 15 },
-            { name: 'Real Estate', value: 10 },
-          ],
-          colors: ['#ff7043', '#f57c00', '#ffa726', '#ffb74d', '#ffe0b2'],
-          description: 'Portfolio designed to protect against inflation',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-      ];
-    } else if (risk === 'moderate') {
-      portfolioCharts = [
-        {
-          title: 'Balanced Growth',
-          data: [
-            { name: 'S&P 500 ETF', value: 35 },
-            { name: 'International Stocks', value: 25 },
-            { name: 'Corporate Bonds', value: 15 },
-            { name: 'REITs', value: 15 },
-            { name: 'Gold', value: 10 },
-          ],
-          description: 'Balanced approach with focus on long-term growth',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-        {
-          title: 'Income-Growth Hybrid',
-          data: [
-            { name: 'Dividend Stocks', value: 40 },
-            { name: 'Growth Stocks', value: 25 },
-            { name: 'Corporate Bonds', value: 20 },
-            { name: 'REITs', value: 15 },
-          ],
-          colors: ['#4caf50', '#8bc34a', '#ffeb3b', '#f44336'],
-          description:
-            'Strategy balancing growth potential with income generation',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-        {
-          title: 'Global Diversification',
-          data: [
-            { name: 'US Stocks', value: 30 },
-            { name: 'International Dev', value: 25 },
-            { name: 'Emerging Markets', value: 15 },
-            { name: 'Global Bonds', value: 20 },
-            { name: 'Alternatives', value: 10 },
-          ],
-          colors: ['#ff7043', '#f57c00', '#ffa726', '#ffb74d', '#ffe0b2'],
-          description: 'Portfolio with global diversification across markets',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-      ];
-    } else {
-      portfolioCharts = [
-        {
-          title: 'Aggressive Growth',
-          data: [
-            { name: 'Growth Stocks', value: 50 },
-            { name: 'Emerging Markets', value: 25 },
-            { name: 'Cryptocurrencies', value: 15 },
-            { name: 'High-Yield Bonds', value: 10 },
-          ],
-          description:
-            'High-risk strategy targeting maximum capital appreciation',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-        {
-          title: 'Tech-Focused',
-          data: [
-            { name: 'Tech Giants', value: 35 },
-            { name: 'Cloud Computing', value: 25 },
-            { name: 'Semiconductors', value: 20 },
-            { name: 'AI & Robotics', value: 20 },
-          ],
-          colors: ['#4caf50', '#8bc34a', '#ffeb3b', '#f44336'],
-          description:
-            'Concentrated portfolio focused on technology sector growth',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-        {
-          title: 'Thematic Investing',
-          data: [
-            { name: 'Disruptive Tech', value: 30 },
-            { name: 'Clean Energy', value: 25 },
-            { name: 'Blockchain', value: 20 },
-            { name: 'Space Exploration', value: 15 },
-            { name: 'Biotech', value: 10 },
-          ],
-          colors: ['#ff7043', '#f57c00', '#ffa726', '#ffb74d', '#ffe0b2'],
-          description: 'Portfolio targeting innovative, high-growth themes',
-          tooltipLabel: 'Allocation',
-          unit: '%',
-        },
-      ];
+    
+    const keys: RiskLevel[] = ['SPY','60_40']
+    for (let i = 0; i < keys.length; i++) {
+      const chart_dataResponse = await fetchAssetAllocationData(keys[i]);
+      portfolioCharts.push({
+        title: keys[i],
+        data: chart_dataResponse.data,
+        description: 'Portfolio Allocation based on ' + keys[i].replace('_',' '),
+        tooltipLabel: 'Allocation',
+        unit: '%',
+      })
     }
+    //portfolioCharts = []
+    // Generate portfolio strategy charts based on risk level
+    // if (risk === 'risk_averse') {
+    //   portfolioCharts = [
+    //     {
+    //       title: 'Conservative Strategy',
+    //       data: [
+    //         { name: 'Treasury Bonds', value: 40 },
+    //         { name: 'Blue Chip Stocks', value: 30 },
+    //         { name: 'Municipal Bonds', value: 15 },
+    //         { name: 'REITs', value: 10 },
+    //         { name: 'Gold', value: 5 },
+    //       ],
+    //       description:
+    //         'Low-risk strategy focused on capital preservation and stable income',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //     {
+    //       title: 'Income-Focused',
+    //       data: [
+    //         { name: 'Dividend Stocks', value: 40 },
+    //         { name: 'Corporate Bonds', value: 30 },
+    //         { name: 'Preferred Shares', value: 15 },
+    //         { name: 'REITs', value: 15 },
+    //       ],
+    //       colors: ['#4caf50', '#8bc34a', '#ffeb3b', '#f44336'],
+    //       description:
+    //         'Strategy optimized for generating regular passive income',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //     {
+    //       title: 'Inflation Protection',
+    //       data: [
+    //         { name: 'TIPS', value: 40 },
+    //         { name: 'Gold', value: 20 },
+    //         { name: 'Commodities', value: 15 },
+    //         { name: 'Value Stocks', value: 15 },
+    //         { name: 'Real Estate', value: 10 },
+    //       ],
+    //       colors: ['#ff7043', '#f57c00', '#ffa726', '#ffb74d', '#ffe0b2'],
+    //       description: 'Portfolio designed to protect against inflation',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //   ];
+    // } else if (risk === 'moderate') {
+    //   portfolioCharts = [
+    //     {
+    //       title: 'Balanced Growth',
+    //       data: [
+    //         { name: 'S&P 500 ETF', value: 35 },
+    //         { name: 'International Stocks', value: 25 },
+    //         { name: 'Corporate Bonds', value: 15 },
+    //         { name: 'REITs', value: 15 },
+    //         { name: 'Gold', value: 10 },
+    //       ],
+    //       description: 'Balanced approach with focus on long-term growth',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //     {
+    //       title: 'Income-Growth Hybrid',
+    //       data: [
+    //         { name: 'Dividend Stocks', value: 40 },
+    //         { name: 'Growth Stocks', value: 25 },
+    //         { name: 'Corporate Bonds', value: 20 },
+    //         { name: 'REITs', value: 15 },
+    //       ],
+    //       colors: ['#4caf50', '#8bc34a', '#ffeb3b', '#f44336'],
+    //       description:
+    //         'Strategy balancing growth potential with income generation',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //     {
+    //       title: 'Global Diversification',
+    //       data: [
+    //         { name: 'US Stocks', value: 30 },
+    //         { name: 'International Dev', value: 25 },
+    //         { name: 'Emerging Markets', value: 15 },
+    //         { name: 'Global Bonds', value: 20 },
+    //         { name: 'Alternatives', value: 10 },
+    //       ],
+    //       colors: ['#ff7043', '#f57c00', '#ffa726', '#ffb74d', '#ffe0b2'],
+    //       description: 'Portfolio with global diversification across markets',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //   ];
+    // } else {
+    //   portfolioCharts = [
+    //     {
+    //       title: 'Aggressive Growth',
+    //       data: [
+    //         { name: 'Growth Stocks', value: 50 },
+    //         { name: 'Emerging Markets', value: 25 },
+    //         { name: 'Cryptocurrencies', value: 15 },
+    //         { name: 'High-Yield Bonds', value: 10 },
+    //       ],
+    //       description:
+    //         'High-risk strategy targeting maximum capital appreciation',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //     {
+    //       title: 'Tech-Focused',
+    //       data: [
+    //         { name: 'Tech Giants', value: 35 },
+    //         { name: 'Cloud Computing', value: 25 },
+    //         { name: 'Semiconductors', value: 20 },
+    //         { name: 'AI & Robotics', value: 20 },
+    //       ],
+    //       colors: ['#4caf50', '#8bc34a', '#ffeb3b', '#f44336'],
+    //       description:
+    //         'Concentrated portfolio focused on technology sector growth',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //     {
+    //       title: 'Thematic Investing',
+    //       data: [
+    //         { name: 'Disruptive Tech', value: 30 },
+    //         { name: 'Clean Energy', value: 25 },
+    //         { name: 'Blockchain', value: 20 },
+    //         { name: 'Space Exploration', value: 15 },
+    //         { name: 'Biotech', value: 10 },
+    //       ],
+    //       colors: ['#ff7043', '#f57c00', '#ffa726', '#ffb74d', '#ffe0b2'],
+    //       description: 'Portfolio targeting innovative, high-growth themes',
+    //       tooltipLabel: 'Allocation',
+    //       unit: '%',
+    //     },
+    //   ];
+    // }
 
     setDashboardData({
       revenueData: truncatedRevenueData,
@@ -625,7 +672,7 @@ const Dashboard: React.FC = () => {
             </select>
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Market Conditions
             </label>
@@ -637,7 +684,7 @@ const Dashboard: React.FC = () => {
               <option value="bull">Bull Market</option>
               <option value="bear">Bear Market</option>
             </select>
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -655,6 +702,7 @@ const Dashboard: React.FC = () => {
                 const value = parseFloat(e.target.value);
                 if (!isNaN(value)) {
                   e.target.value = value.toFixed(2);
+                  setInvestmentAmount(value);
                 }
               }}
             />
@@ -672,15 +720,24 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 place-items-center">
         <div className="bg-white p-4 rounded-lg shadow">
           <p className="text-sm font-medium text-gray-500 mb-2">Total Return</p>
           <div className="text-2xl font-bold text-black">
-            {dashboardData.summaryMetrics.totalReturn}
+            {dashboardData.summaryMetrics.totalReturn} %
           </div>
-          <p className="text-xs text-green-500 flex items-center mt-1">
-            <TrendingUp size={14} className="mr-1" />
-            {dashboardData.summaryMetrics.changePercent} from previous period
+          {/* <p className={`text-xs ${'text-custom-red'} flex items-center mt-1`}> */}
+          <p className={`text-xs ${Number(dashboardData.summaryMetrics.totalReturn) > 0 === true ? "text-green-500" : 'text-custom-red'} flex items-center mt-1`}>
+            {/* <TrendingUp size={14} className="mr-1" />
+            <TrendingDown size={14} className="mr-1" /> */}
+            {Number(dashboardData.summaryMetrics.totalReturn)  > 0 ? (
+                <TrendingUp size={14} className="mr-1" />
+              ) : (
+                <TrendingDown size={14} className="mr-1" />
+              )}
+            {Number(dashboardData.summaryMetrics.totalReturn) > 0 === true ? "+" : ''} 
+            {Number(dashboardData.summaryMetrics.totalReturn)} 
+            % from initial investment
           </p>
         </div>
 
@@ -691,13 +748,19 @@ const Dashboard: React.FC = () => {
           <div className="text-2xl font-bold text-black">
             {dashboardData.summaryMetrics.portfolioValue}
           </div>
-          <p className="text-xs text-green-500 flex items-center mt-1">
-            <TrendingUp size={14} className="mr-1" />
-            +8.3% from initial investment
+          <p className={`text-xs ${Number(dashboardData.summaryMetrics.change_amount) > 0 === true ? "text-green-500" : 'text-custom-red'} flex items-center mt-1`}>
+            {/* <TrendingUp size={14} className="mr-1" /> */}
+            {Number(dashboardData.summaryMetrics.change_amount)  > 0 ? (
+                <TrendingUp size={14} className="mr-1" />
+              ) : (
+                <TrendingDown size={14} className="mr-1" />
+              )}
+            {Number(dashboardData.summaryMetrics.change_amount) > 0 === true ? "Up by " : 'Down by ' } 
+            {Number(dashboardData.summaryMetrics.change_amount).toLocaleString('en-US', { style: 'currency',  currency: 'USD' })} from initial investment of {investment_amount.toLocaleString('en-US', { style: 'currency',  currency: 'USD' })}
           </p>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow">
+        {/* <div className="bg-white p-4 rounded-lg shadow">
           <p className="text-sm font-medium text-gray-500 mb-2">
             Dividend Yield
           </p>
@@ -719,7 +782,7 @@ const Dashboard: React.FC = () => {
             <TrendingUp size={14} className="mr-1" />
             {dashboardData.summaryMetrics.riskProfile} risk profile
           </p>
-        </div>
+        </div> */}
       </div>
 
       {/* Performance Chart */}
@@ -728,14 +791,14 @@ const Dashboard: React.FC = () => {
           <div>
             <h2 className="text-xl font-bold">Portfolio Performance</h2>
             <p className="text-gray-600">
-              {investmentLength === '3months'
+            % Returns for {investmentLength === '3months'
                 ? '3 Month'
                 : investmentLength === '6months'
                 ? '6 Month'
                 : investmentLength === '9months'
                 ? '9 Month'
-                : 'Annual'}{' '}
-              returns over time
+                : '1 Year'}{' '}
+                investment period
             </p>
           </div>
         </div>
@@ -756,9 +819,25 @@ const Dashboard: React.FC = () => {
               <Area
                 type="monotone"
                 dataKey="value"
-                name="% Returns"
+                name="Suggested Portfolio"
                 stroke={colors.primary}
                 fill={colors.primary}
+                fillOpacity={0.2}
+              />
+              <Area
+                type="monotone"
+                dataKey="SPY"
+                name="SPY" // Your chosen name for the second series
+                stroke={colors.secondary}
+                fill={colors.secondary}
+                fillOpacity={0.2}
+              />
+              <Area
+                type="monotone"
+                dataKey="_60_40"
+                name="60/40 SPY-TLT" // Your chosen name for the second series
+                stroke={colors.tertiary}
+                fill={colors.tertiary}
                 fillOpacity={0.2}
               />
             </AreaChart>
@@ -780,13 +859,13 @@ const Dashboard: React.FC = () => {
           <div>
             <h2 className="text-xl font-bold">Recommended Asset Allocation</h2>
             <p className="text-gray-600">
-              {riskLevel === 'risk_averse'
+              Recommended Asset Allocation for {riskLevel === 'risk_averse'
                 ? 'Conservative'
                 : riskLevel === 'moderate'
                 ? 'Balanced'
                 : 'Aggressive'}{' '}
               distribution of investment assets
-              {marketRegime === 'bear' ? ' (Bear Market Adjusted)' : ''}
+              {/* {marketRegime === 'bear' ? ' (Bear Market Adjusted)' : ''} */}
             </p>
           </div>
         </div>
@@ -831,13 +910,7 @@ const Dashboard: React.FC = () => {
         <div className="mb-4">
           <h2 className="text-xl font-bold">Alternative Strategies</h2>
           <p className="text-gray-600">
-            Explore different portfolio allocation approaches for
-            {riskLevel === 'risk_averse'
-              ? ' conservative '
-              : riskLevel === 'moderate'
-              ? ' balanced '
-              : ' aggressive '}
-            investors
+            Explore and compare different portfolio allocation approaches
           </p>
         </div>
 
@@ -974,7 +1047,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Asset Class Performance */}
-      <div className="bg-white p-6 rounded-lg shadow mb-6">
+      {/* <div className="bg-white p-6 rounded-lg shadow mb-6">
         <div className="mb-4">
           <h2 className="text-xl font-bold">Asset Class Performance</h2>
           <p className="text-gray-600">Performance metrics by asset class</p>
@@ -1013,7 +1086,7 @@ const Dashboard: React.FC = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div> */}
 
       <footer className="bg-white p-4 rounded-lg shadow text-center text-gray-500 text-sm">
         <p>

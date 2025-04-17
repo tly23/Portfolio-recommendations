@@ -35,16 +35,13 @@ def get_asset_class_allocation(filepath: str, risk_level: str) -> Dict[str, List
         if 'Asset Class' not in df.columns:
             raise ValueError(f"{filepath} CSV file must contain an 'Asset Class' column")
         
-        if 'weights' not in df.columns:
-            raise ValueError(f"{filepath} CSV file must contain an 'weights' column")
-        
-        data = [{"name": row['Asset Class'], "value": row['weights']} for _, row in df.iterrows()]
-
+        # if 'weights' not in df.columns:
+        #     raise ValueError(f"{filepath} CSV file must contain an 'weights' column")
 
         column_mapping = {
-            "risk_averse": "Dynamic Risk Averse",
-            "risk_loving": "Dynamic Risk Loving",
-            "moderate": "Dynamic Risk Neutral"
+            "risk_averse": "Risk Averse",
+            "risk_loving": "Risk Loving",
+            "moderate": "Risk Neutral"
         }
 
         if risk_level not in column_mapping:
@@ -53,6 +50,9 @@ def get_asset_class_allocation(filepath: str, risk_level: str) -> Dict[str, List
         column_name = column_mapping[risk_level]
         if column_name not in df.columns:
             raise ValueError(f"CSV file must contain a '{column_name}' column")
+        
+
+        data = [{"name": row['Asset Class'].replace("_", " "), "value": round(float(row[column_mapping[risk_level]]) * 100, 2)} for _, row in df.iterrows()]
         
         return {"data": data}
     except Exception as e:
@@ -66,7 +66,7 @@ def get_monthly_data(filepath: str, risk_level: str) -> Dict[str, List[Dict[str,
     
     Args:
         filepath: Path to the CSV file
-        risk_level: One of 'risk_loving', 'risk_averse', or 'moderate'
+        risk_level: One of 'risk_loving', 'risk_averse', 'moderate', '60_40', or 'SPY'
         
     Returns:
         A dictionary with a 'data' key containing the monthly values
@@ -76,7 +76,9 @@ def get_monthly_data(filepath: str, risk_level: str) -> Dict[str, List[Dict[str,
         column_mapping = {
             "risk_averse": "Dynamic Risk Averse",
             "risk_loving": "Dynamic Risk Loving",
-            "moderate": "Dynamic Risk Neutral"
+            "moderate": "Dynamic Risk Neutral",
+            "60_40": "60/40 SPY-TLT",
+            "SPY": "SPY"
         }
         
         # Ensure the risk level is valid
@@ -145,6 +147,8 @@ def get_monthly_data(filepath: str, risk_level: str) -> Dict[str, List[Dict[str,
                 # Get the last available day in the month
                 last_available_day = month_data['Date'].max()
                 last_day_value = month_data[month_data['Date'] == last_available_day][column_name].iloc[0]
+                last_day_spy_value = month_data[month_data['Date'] == last_available_day]['SPY'].iloc[0]
+                last_day_60_40_value = month_data[month_data['Date'] == last_available_day][column_mapping['60_40']].iloc[0]
                 
                 # Format the month name
                 month_name = datetime(current_year, current_month, 1).strftime('%b %Y')
@@ -152,7 +156,9 @@ def get_monthly_data(filepath: str, risk_level: str) -> Dict[str, List[Dict[str,
                 # Add to result
                 result.append({
                     "name": month_name,
-                    "value": round(float(last_day_value), 2) if isinstance(last_day_value, (int, float)) else 0.0
+                    "value": round(float(last_day_value), 2) if isinstance(last_day_value, (int, float)) else 0.0,
+                    "SPY": round(float(last_day_spy_value), 2) if isinstance(last_day_spy_value, (int, float)) else 0.0,
+                    "_60_40": round(float(last_day_60_40_value), 2) if isinstance(last_day_60_40_value, (int, float)) else 0.0
                 })
             
             # Move to the next month
@@ -163,8 +169,14 @@ def get_monthly_data(filepath: str, risk_level: str) -> Dict[str, List[Dict[str,
                 current_month += 1
         
         first_value = result[0]["value"]
+        first_spy_value = result[0]["SPY"]
+        first_60_40_value = result[0]["_60_40"]
 
-        modified_result = [{"name": item["name"], "value": round(((item["value"] / first_value) - 1)*100, 2)} for item in result]
+        modified_result = [{"name": item["name"],
+                            "value": round(((item["value"] / first_value) - 1)*100, 2),
+                            "SPY": round(((item["SPY"] / first_spy_value) - 1)*100, 2),
+                            "_60_40": round(((item["_60_40"] / first_60_40_value) - 1)*100, 2)
+                            } for item in result]
 
         print(modified_result)
         return {"data": modified_result}
@@ -179,7 +191,7 @@ def read_root():
     return {"message": "Financial Data API is running"}
 
 @app.get("/api/monthly-data/")
-def get_monthly_financial_data(risk_level: Literal["risk_averse", "risk_loving", "moderate"] = Query(...)):
+def get_monthly_financial_data(risk_level: Literal["risk_averse", "risk_loving", "moderate", "60_40", "SPY"] = Query(...)):
     """
     Get monthly financial data for the last year based on risk level.
     
