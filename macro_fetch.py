@@ -30,7 +30,7 @@ macro_df = macro_df.reset_index().rename(columns={"index": "Date"})
 macro_df["Month"] = macro_df["Date"].dt.to_period("M").astype(str)  # Convert to YYYY-MM
 
 # Load stock data
-stock_data = pd.read_csv("sp500_market_data.csv", parse_dates=["Date"])
+stock_data = pd.read_csv("big_data/sp500_market_data.csv", parse_dates=["Date"])
 
 # Create monthly and quarterly columns
 stock_data["Month"] = stock_data["Date"].dt.to_period("M").astype(str)  # YYYY-MM
@@ -40,6 +40,6 @@ stock_data["Quarter"] = stock_data["Date"].dt.to_period("Q").astype(str)  # YYYY
 merged_data = stock_data.merge(macro_df, on="Month", how="left")
 
 # Save final dataset
-output_file = "merged_stock_macro_data.csv"
+output_file = "big_data/merged_stock_macro_data.csv"
 merged_data.to_csv(output_file, index=False)
 print(f"Merged data saved to {output_file}")

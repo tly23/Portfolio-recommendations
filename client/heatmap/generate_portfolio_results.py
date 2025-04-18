@@ -103,7 +103,7 @@ plt.ylabel("Market Regime")
 plt.tight_layout()
 
 # Save the heatmap
-heatmap_file = "portfolio_heatmap.png"
+heatmap_file = "charts/portfolio_results_charts/portfolio_heatmap.png"
 plt.savefig(heatmap_file)
 print(f"Saved heatmap visualization to {heatmap_file}")
 

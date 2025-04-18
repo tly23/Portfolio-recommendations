@@ -37,7 +37,7 @@ for ticker in tickers:
     time.sleep(1)  # Slight delay to avoid rate limits
 
 # Save to CSV
-output_file = "sp500_market_data.csv"
+output_file = "big_data/sp500_market_data.csv"
 all_stock_data.to_csv(output_file, index=False)
 print(f"Data saved to {output_file}")
 

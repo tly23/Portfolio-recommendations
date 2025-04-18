@@ -10,7 +10,7 @@ from datetime import timedelta
 np.random.seed(42)
 
 # Load data with regimes
-file_path = "full_dataset_with_regimes.csv"
+file_path = "big_data/full_dataset_with_regimes.csv"
 df = pd.read_csv(file_path)
 df['Date_x'] = pd.to_datetime(df['Date_x'])
 print(f"Loaded dataset with shape: {df.shape}")
@@ -331,8 +331,8 @@ if not results_df.empty:
             print(f"Warning: Could not process data for regime {regime_id}: {e}")
     
     plt.tight_layout()
-    plt.savefig('portfolio_performance_by_regime.png')
-    print("✅ Saved portfolio performance visualization to 'portfolio_performance_by_regime.png'")
+    plt.savefig('charts/optimization_charts/portfolio_performance_by_regime.png')
+    print("✅ Saved portfolio performance visualization to 'charts/optimization_charts/portfolio_performance_by_regime.png'")
 
 # Create weight visualizations for each combination
 print("\nCreating visualizations of portfolio weights...")
@@ -369,14 +369,14 @@ for params, weights in portfolio_weights.items():
     plt.title(f'Top {n_top_holdings} Holdings - {params}')
     plt.grid(True, axis='x')
     plt.tight_layout()
-    plt.savefig(f'portfolio_weights/{params}_weights.png')
+    plt.savefig(f'charts/portfolio_weights/{params}_weights.png')
     plt.close()
 
 # Create a single consolidated PDF with all portfolios
 try:
     from matplotlib.backends.backend_pdf import PdfPages
     
-    with PdfPages('all_portfolio_weights.pdf') as pdf:
+    with PdfPages('pdfs/all_portfolio_weights.pdf') as pdf:
         for params, weights in portfolio_weights.items():
             if not weights:  # Skip empty portfolios
                 continue
@@ -403,8 +403,8 @@ except Exception as e:
 
 # Save results to CSV files if there are valid results
 if not results_df.empty:
-    results_df.to_csv('portfolio_optimization_results.csv')
-    print("✅ Saved portfolio optimization results to 'portfolio_optimization_results.csv'")
+    results_df.to_csv('big_data/portfolio_optimization_results.csv')
+    print("✅ Saved portfolio optimization results to 'big_data/portfolio_optimization_results.csv'")
 
 # Create a more user-friendly portfolio allocation file
 portfolio_allocations = pd.DataFrame()
@@ -433,8 +433,8 @@ for params, weights in portfolio_weights.items():
 
 # Save allocations
 if not portfolio_allocations.empty:
-    portfolio_allocations.to_csv('portfolio_allocations.csv')
-    print("✅ Saved portfolio allocations to 'portfolio_allocations.csv'")
+    portfolio_allocations.to_csv('big_data/portfolio_allocations.csv')
+    print("✅ Saved portfolio allocations to 'big_data/portfolio_allocations.csv'")
 
 # Create a function to get the optimal portfolio based on user inputs
 def get_optimal_portfolio(regime_id, risk_appetite, holding_duration):
