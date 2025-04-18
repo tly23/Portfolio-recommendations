@@ -95,7 +95,7 @@ const Dashboard: React.FC = () => {
   const [investmentLength, setInvestmentLength] =
     useState<InvestmentLength>('1year');
   const [marketRegime, setMarketRegime] = useState<MarketRegime>('bull');
-  const [investment_amount, setInvestmentAmount] = useState<number>(10000);
+  const [investment_amount, setInvestmentAmount] = useState<number>(100000);
   // Dashboard states
   const [activeChart, setActiveChart] = useState<number>(0);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
@@ -847,8 +847,7 @@ const Dashboard: React.FC = () => {
         <div className="mt-4 text-sm text-gray-500 flex items-center">
           <AlertCircle size={16} className="text-yellow-500 mr-2" />
           <span>
-            Portfolio growth of {dashboardData.summaryMetrics.changePercent}{' '}
-            compared to previous period
+            Portfolio growth of {dashboardData.summaryMetrics.totalReturn}{'% '}
           </span>
         </div>
       </div>
