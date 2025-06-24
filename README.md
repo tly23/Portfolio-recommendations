@@ -173,5 +173,4 @@ Charts:
 5. Visualizations render in the browser for user interaction
 
 
-## License
-Specify the license used for your project (MIT, Apache 2.0, etc.).
+
